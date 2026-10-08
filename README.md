@@ -1,6 +1,6 @@
 # Cellular Automaton Models of Traffic Flow
 
-Senior capstone project (Mathematics, California Lutheran University, Fall 2026).
+Senior capstone project (Mathematics, Fall 2026).
 
 This project designs new cellular automaton (CA) rules for vehicular traffic, compares them against the classic **Nagel–Schreckenberg (NaSch)** model, and studies how traffic behavior (free flow, phantom jams, phase transitions) changes as the rules and the road geometry change.
 
