@@ -34,6 +34,23 @@ Each car also looks at the car ahead: its speed `v_f` and its gap `d_f`.
 
 **Collision-freeness:** the car ahead always moves at least `g_f` cells, so moving at most `d + g_f` cells is safe. The code also verifies this numerically at every step.
 
+### How ADSD relates to earlier models
+
+ADSD sits between NaSch [1] and the brake-light model of Knospe et al. [4]. Both of ADSD's ingredients appear in the literature: the slow-to-start rule for stopped cars is the velocity-dependent randomization of Barlovic et al. [3], and Knospe et al. combine it with an anticipation effective gap and add brake lights. ADSD keeps the two ingredients and drops the brake lights, so each one can be switched on and off and studied on its own.
+
+| | NaSch [1] | ADSD (this project) | Knospe et al. brake-light model [4] |
+|---|---|---|---|
+| Acceleration | `+1` up to `v_max` | `+1` up to `v_max` | `+1` up to `v_max`, unless its own or the leader's brake light is on and the leader is within the interaction horizon |
+| Gap used for braking | `d` | `d + α·max(min(v_f, d_f) − 1, 0)` | `d + max(min(v_f, d_f) − gap_security, 0)` |
+| Anticipation of the car ahead | no | yes (switch `α`) | yes |
+| Brake lights | no | no | yes: a braking car signals the car behind |
+| Random slowdown | `p` for every car | `p0` if stopped, else `p` | `p0` if stopped, `p_b` after seeing a brake light, else `p_d` |
+| Values used | `p = 0.2` | `p = 0.2`, `p0 = 0.5` | `p0 = 0.5`, `p_b = 0.94`, `p_d = 0.1` |
+| Slow restarts from a jam (capacity drop, metastable states) | no | yes | yes |
+| Reduces to NaSch | — | yes: `α = 0`, `p0 = p` | no single switch |
+
+What this project adds on top of these models is the controlled comparison (every difference from NaSch traces to one switch) and the extension of the same rules to T-intersections and merges.
+
 ## Results so far
 
 The fundamental diagram (flow vs. density) for four rule sets, turning each new rule on separately:
@@ -113,3 +130,4 @@ Parameters (`L`, `v_max`, `p`, `p0`) are set near the top of each `run_*.py` scr
 1. K. Nagel and M. Schreckenberg, "A cellular automaton model for freeway traffic," *J. Phys. I France* 2 (1992), 2221–2229.
 2. D. Chowdhury, L. Santen, and A. Schadschneider, "Statistical physics of vehicular traffic and some related systems," *Physics Reports* 329 (2000), 199–329.
 3. R. Barlovic, L. Santen, A. Schadschneider, and M. Schreckenberg, "Metastable states in cellular automata for traffic flow," *Eur. Phys. J. B* 5 (1998), 793–800.
+4. W. Knospe, L. Santen, A. Schadschneider, and M. Schreckenberg, "Towards a realistic microscopic description of highway traffic," *J. Phys. A* 33 (2000), L477.
